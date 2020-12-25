@@ -13,51 +13,17 @@
     <link href="https://cdn.bootcss.com/jquery-weui/1.2.1/css/jquery-weui.min.css" rel="stylesheet">
     <title>在线签字</title>
     <style>
-        * {
-            touch-action: none;
-        }
-        .tanOther {
-            transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -webkit-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            top: 40%!important;left: 25%!important;
-        }
-        .loadingOther {
-            transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -webkit-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            top: -4%!important;left: 40%!important;
-        }
-        @media screen and (orientation: landscape) {
-            .hd-body {
-                display: none;
-            }
-        }
-
         body {
             background: #f4f4f4;
-        }
-
-        .hd-body {
+            overflow: hidden;
             width: 100%;
-            height: 2.2rem;
-            display: block;
-            text-align: center;
-            background: #fff;
-            line-height: 2.2rem;
-            border-bottom: 1px solid #ddd;
+            height: 100%;
         }
 
         .g-signature-title {
-            padding-left: .5rem;
             font-size: .9rem;
             color: #666;
             font-weight: bold;
-            margin-bottom: .5rem;
             text-align: center;
             transform: rotate(90deg);
             -ms-transform: rotate(90deg);
@@ -65,16 +31,22 @@
             -webkit-transform: rotate(90deg);
             -o-transform: rotate(90deg);
             position: absolute;
-            right: -1.6rem;
-            top: 13rem;
+            right: -15.4rem;
+            top: 16rem;
             display: flex;
             align-items: center;
+            overflow: hidden;
+            width: 100vh;
         }
-        .g-signature-title #img{
-            position: absolute;
-            left: -10rem;
-            width: 8%;
+
+        .g-signature-title div {
+            flex: 1;
         }
+
+        .g-signature-title #img {
+            width: 1.5rem;
+        }
+
         .g-signatrue-body {
             background: #fff;
             height: 100vh;
@@ -82,22 +54,24 @@
             width: 64vw;
         }
 
-        .g-signatrue-body>.jSignature {
-            height: 100%!important;
+        .g-signatrue-body > .jSignature {
+            height: 100% !important;
         }
+
         .g-btns {
             text-align: center;
             margin-top: 1rem;
-            transform:rotate(90deg);
-            -ms-transform:rotate(90deg); 	/* IE 9 */
-            -moz-transform:rotate(90deg); 	/* Firefox */
-            -webkit-transform:rotate(90deg); /* Safari 和 Chrome */
-            -o-transform:rotate(90deg);
+            transform: rotate(90deg);
+            -ms-transform: rotate(90deg); /* IE 9 */
+            -moz-transform: rotate(90deg); /* Firefox */
+            -webkit-transform: rotate(90deg); /* Safari 和 Chrome */
+            -o-transform: rotate(90deg);
             position: absolute;
-            top: 12rem;
+            top: 14rem;
             left: -6rem;
         }
-        .g-btns>button {
+
+        .g-btns > button {
             width: 7.5rem;
             height: 2.25rem;
             font-size: .9rem;
@@ -105,6 +79,7 @@
             border: none;
             border-radius: 1rem;
         }
+
         .u-reset {
             background: #ddd;
             color: #666;
@@ -112,38 +87,62 @@
         }
 
         .u-submit {
-            background: #fc4949;
+            background: #007AFF;
             color: #fff;
             margin-left: .5rem;
         }
 
+        #load {
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, .3);
+        }
+
+        #load div {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #load #load-msg {
+            transform: rotate(90deg);
+            -ms-transform: rotate(90deg); /* IE 9 */
+            -moz-transform: rotate(90deg); /* Firefox */
+            -webkit-transform: rotate(90deg); /* Safari 和 Chrome */
+            -o-transform: rotate(90deg);
+            color: white;
+            padding: .4rem .8rem;
+            border-radius: .4rem;
+            background: rgba(0, 0, 0, 0.6);
+        }
     </style>
 </head>
 <body>
 <div class="g-signature-title">
-    <img src="../../images/arrow.png" id="img"/>
-    <span>报名人签字：</span>
+    <img src="/static/img/back1.png" id="img"/>
+    <div>本人签名</div>
 </div>
 <div class="g-signatrue-body">
 </div>
 <div class="g-btns">
     <button class="u-reset">重新签字</button>
-    <button class="u-submit">确认</button>
+    <button class="u-submit">提交</button>
 </div>
-<div id="tanwin" class="tan tanOther" style="display:none;"></div>
-<div id="loading" class="loadingOther" style="display: none;">
-    <div class="weui-loadmore" style="width: 45%;">
-        <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">正在加载中...</span>
+<div id="load" style="display: none">
+    <div>
+        <span id="load-msg">提示消息</span>
     </div>
 </div>
-<!--<div id="fullMask" style="display:none;width: 100vw;height: 100vh;position: fixed;top: 0;left: 0;background: #000;opacity: .4">-->
-
-<!--</div>-->
+<form id="form" method="post" hidden><input name="sign"></form>
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/jquery-weui/1.2.1/js/jquery-weui.js"></script>
-
 <script src="https://cdn.bootcss.com/jSignature/2.1.2/flashcanvas.min.js"></script>
 <script src="https://cdn.bootcss.com/jSignature/2.1.3/jSignature.min.js"></script>
 <script>
@@ -169,7 +168,6 @@
          * @type {boolean}
          */
         var isDraw = false;
-        var isBtns=false;
 //用户触摸事件，只要有触摸，isDraw则变为true.
         $('body').on('touchmove', '.jSignature', function () {
             isDraw = true;
@@ -183,8 +181,6 @@
 
 //用户提交签名
         $('.u-submit').on('click', function () {
-            if(isBtns)return;
-            isBtns=true;
             $('.loadingOther').show();
             //重置变量并获取数据
             signatureData = '';
@@ -192,7 +188,8 @@
             $('.hide-canvas').remove();
             //这里请勿修改，因为是签名旋转90度，所以之前的长就显示现在的宽，之前的宽就是现在的长。
             $('body').append('<canvas style="display: none;" class="hide-canvas" width="' + hiddenHeight + '" height="' + hiddenWidth + '"></canvas>');
-            var ctx = document.querySelector('.hide-canvas').getContext("2d");
+            var canvas = document.querySelector('.hide-canvas');
+            var ctx = canvas.getContext("2d");
             var img = new Image();
             img.src = signatureData;
             img.onload = function (ev) {
@@ -204,20 +201,61 @@
                 ctx.drawImage(img, -img.width / 2, -img.height / 2);
                 ctx.restore();
                 if (!isDraw) {
-                    $('.loadingOther').hide();
-                    tanwin('您还未签名');
-                    isBtns=false;
+                    toast('请签名后再提交');
                 } else {
-                    //jzjy.ajax()
+                    load(true);
+                    $.post('/api/sign', {sign: canvas.toDataURL("image/jpeg", 0.8)}, (res, status) => {
+
+                        if (typeof res.code != 'undefined') {
+
+                            if (res.code == 0) {
+                                toast(res.msg);
+                                setTimeout(() => {
+                                    window.location.href = '/';//返回到首页
+                                }, 2000);
+                            } else {
+                                toast(res.msg);
+                            }
+                        } else {
+                            toast('网络错误');
+                        }
+                    });
+
                 }
             };
         });
 
     })
-    $('#img').on("click",function(){
+    $('#img').on("click", function () {
         window.history.back(-1);
-        //self.location=document.referrer
     })
+
+    function toast(msg) {
+        show(msg, true);
+        setTimeout(() => {
+            //停止提示
+            show();
+        }, 2000);
+    }
+
+    function load(load) {
+        if (load) {
+            //加载中
+            show('正在提交中。。。', true);
+        } else {
+            //对话框消失
+            show();
+        }
+    }
+
+    function show(msg, show) {
+        if (show) {
+            $('#load').css('display', 'block');
+            $('#load-msg').text(msg);
+        } else {
+            $('#load').css('display', 'none');
+        }
+    }
 
 </script>
 </html>
